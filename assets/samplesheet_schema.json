@@ -1,0 +1,53 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://raw.githubusercontent.com/test/test/master/assets/schema_input.json",
+    "title": "Test schema for samplesheets",
+    "description": "Schema for the file provided with params.data_input",
+    "type": "array",
+    "items": {
+        "type": "object",
+        "properties": {
+            "accession": {
+                "type": "string",
+                "description": "Accession number of the sample",
+                "meta": "accession"
+            },
+            "assemblies": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "description": "Assembly fasta file list"
+                },
+                "meta": "assemblies"
+            },
+            "reads": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "description": "Longread file list required for fastk database generation"
+                },
+                "pattern": "^.*(fasta|fastq)$",
+                "meta": "reads"
+            },
+            "initial_coverage": {
+                "type": "integer",
+                "description": "Initial haplotype coverage",
+                "default": null,
+                "meta": "in_cov"
+            },
+            "ploidy": {
+                "type": "integer",
+                "description": "Ploidy",
+                "minimum": 0,
+                "meta": "ploidy"
+            },
+            "kmer_length": {
+                "type": "integer",
+                "description": "K-mer length",
+                "default": 31,
+                "minimum": 3,
+                "meta": "kmer_length"
+            }
+        }
+    }
+}
