@@ -10,55 +10,15 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["sample", "input", "longreads", "outdir"],
+            "required": ["samplesheet"],
             "properties": {
-                "sample": {
+                "samplesheet": {
                     "type": "string",
-                    "description": "Sample name",
-                    "help_text": "ID for the sample to process",
-                    "fa_icon": "fas fa-sample"
-                },
-                "kmer_length": {
-                    "type": "integer",
-                    "description": "K-mer length",
-                    "help_text": "K-mer length for the fastk analysis",
-                    "fa_icon": "fas fa-hashtag"
-                },
-                "ploidy": {
-                    "type": "integer",
-                    "description": "Ploidy",
-                    "help_text": "Ploidy for the fastk analysis",
-                    "fa_icon": "fas fa-hashtag"
-                },
-                "initial_hap_cov": {
-                    "type": "integer",
-                    "description": "Initial haplotype coverage",
-                    "help_text": "Initial haplotype coverage for the fastk analysis",
-                    "fa_icon": "fas fa-hashtag"
-                },
-                "input": {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "format": "path",
-                        "pattern": "^\\S+\\.fn?a(sta)?(\\.gz)?$"
-                    },
-                    "description": "Input assembly files",
-                    "help_text": "You need the input fasta file array",
-                    "fa_icon": "fas fa-file-signature",
-                    "exists": true
-                },
-                "longreads": {
-                    "type": "array",
-                    "items": {
-                        "type": "string",
-                        "format": "path",
-                        "pattern": "(^\\S+\\.fn?a(sta)?(\\.gz)?)$|(^\\S+\\.fa(stq)?(\\.gz)?)$"
-                    },
-                    "description": "Input read files in zipped fastq or fasta format",
-                    "help_text": "You need the input read file array",
-                    "fa_icon": "fas fa-file-signature",
-                    "exists": true
+                    "description": "Samplesheet path",
+                    "help_text": "Path to the samplesheet",
+                    "fa_icon": "fas fa-sample",
+                    "format": "file-path",
+                    "schema": "assets/samplesheet_schema.json"
                 },
                 "outdir": {
                     "type": "string",
@@ -69,11 +29,13 @@
                 "run_genomescope": {
                     "type": "boolean",
                     "description": "Run GenomeScope2 on the input reads",
+                    "default": true,
                     "fa_icon": ""
                 },
                 "run_histex": {
                     "type": "boolean",
                     "description": "Run HistEx on the input reads",
+                    "default": true,
                     "fa_icon": ""
                 },
                 "email": {

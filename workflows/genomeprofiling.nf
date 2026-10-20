@@ -4,18 +4,18 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-//
-include { FASTK_FASTK           } from '../modules/nf-core/fastk/fastk/main'
-include { FASTK_HISTEX          } from '../modules/nf-core/fastk/histex/main'
-include { GENOMESCOPE2          } from '../modules/nf-core/genomescope2/main'
-
-//
-include { SMUDGEPLOT_HETMERS    } from '../modules/local/smudgeplot/hetmers/main'
-include { SMUDGEPLOT_ALL        } from '../modules/local/smudgeplot/all/main'
+// NF-CORE MODULE IMPORTS
+include { FASTK_FASTK            } from '../modules/nf-core/fastk/fastk/main'
+include { FASTK_HISTEX           } from '../modules/nf-core/fastk/histex/main'
+include { GENOMESCOPE2           } from '../modules/nf-core/genomescope2/main'
+include { SMUDGEPLOT_HETMERS     } from '../modules/local/smudgeplot/hetmers/main'
+include { SMUDGEPLOT_ALL         } from '../modules/local/smudgeplot/all/main'
 
 // SANGER-TOL SUBWORKFLOW IMPORTS
-include { GENOME_STATISTICS     } from '../subworkflows/sanger-tol/genome_statistics/main'
+include { GENOME_STATISTICS      } from '../subworkflows/sanger-tol/genome_statistics/main'
 
+// NF-CORE SUBWORKFLOW IMPORTS
+include { FASTA_CLEAN_FAIDX      } from '../subworkflows/nf-core/fasta_clean_faidx/main'
 
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -31,19 +31,41 @@ workflow GENOMEPROFILING {
 
     take:
     ch_assemblies   // channel: [meta, [assemblies...]]
-    ch_reads_list   // channel: [meta, [reads...]]
     outdir          // output directory
 
     main:
 
     def ch_versions = channel.empty()
 
+    ch_data         = ch_assemblies
+        .multiMap { meta, assemblies, reads ->
+            // NOTE: BREAK DOWN THE LIST OF ASSEMBLIES INTO TUPLES OF (meta, assembly)
+            assemblies: assemblies.withIndex().collect{ assembly, idx ->
+                def new_meta = meta + [ idx: idx ]
+                tuple(new_meta, file(assembly))
+            }
+            reads: tuple(meta, reads)
+        }
+
+    ch_assembly      = ch_data.assemblies.flatMap{it}
+
+
+    //
+    // SUBWORKFLOW: UNZIP, CLEAN AND INDEX THE ASSEMBLIES
+    //
+    FASTA_CLEAN_FAIDX(
+        ch_assembly,
+        false,
+        true,
+        true
+    )
+
 
     //
     // MODULE: RUN FASTK FOR KMER COUNTS AND HISTS
     //
     FASTK_FASTK(
-        ch_reads_list
+        ch_data.reads
     )
 
 
@@ -56,7 +78,7 @@ workflow GENOMEPROFILING {
 
 
     //
-    // MODULE:
+    // MODULE: RUN GENOMESCOPE2 TO GENERATE GENOME SCOPE PLOTS
     //
     GENOMESCOPE2(
         FASTK_HISTEX.out.hist.filter { _meta, _hist -> params.run_genomescope}
@@ -64,12 +86,16 @@ workflow GENOMEPROFILING {
 
 
     //
-    // MODULE: RUN SMUDGEPLOT
+    // MODULE: RUN HETMERS TO COLLECT DATA NEEDED FOR SMUDGEPLOT
     //
     SMUDGEPLOT_HETMERS(
         FASTK_FASTK.out.ktab
     )
 
+
+    //
+    // MODULE: RUN SMUDGEPLOT ALL TO GENERATE THE SMUDGEPLOT GRAPHS
+    //
     SMUDGEPLOT_ALL(
         SMUDGEPLOT_HETMERS.out.kmer_cov
     )
@@ -85,12 +111,27 @@ workflow GENOMEPROFILING {
         }
 
 
+    def assembly_data = FASTA_CLEAN_FAIDX.out.reference
+        .map { meta, fasta ->
+            def new_meta = meta - meta.subMap(['idx'])
+            tuple(new_meta, meta.idx, fasta)
+        }
+        .groupTuple(by: 0)
+        .map { meta_base, indices, fastas ->
+            // Sort by index
+            def sorted = [indices, fastas].transpose()
+                .sort { it[0] }
+                .collect { it[1] }
+            tuple(meta_base, sorted)
+        }
+
+
     //
     // SUBWORKFLOW: GENOMESTATISTICS RUNS ASMSTATS AND GFSTATS
     //              BUSCO WILL NOT BE USED FOR THIS CONTEXT
     //
     GENOME_STATISTICS(
-        ch_assemblies,
+        assembly_data,
         fastk_data.map{ meta, hist, ktab_list ->
             tuple(meta, hist, ktab_list, [], [])
         },

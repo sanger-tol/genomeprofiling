@@ -25,6 +25,7 @@ workflow GENOME_STATISTICS {
     //
     // Logic: haplotypes into independent channels
     //
+
     ch_assemblies_split = ch_assemblies
         .flatMap { meta, asms ->
             asms
@@ -110,7 +111,7 @@ workflow GENOME_STATISTICS {
     //
     ch_statistics_output = ASMSTATS.out.stats
         .mix(GFASTATS.out.assembly_summary)
-        //.map { meta, stats -> [meta - meta.subMap("_hap"), stats] }
+        .map { meta, stats -> [meta - meta.subMap("_hap"), stats] }
         .groupTuple()
         .map { meta, out -> [meta, out.flatten().sort { f -> f.getName() }] }
 

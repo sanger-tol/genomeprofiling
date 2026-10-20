@@ -28,8 +28,7 @@ include { PIPELINE_COMPLETION       } from './subworkflows/local/utils_nfcore_ge
 workflow SANGERTOL_GENOMEPROFILING {
 
     take:
-    assemblies // channel: assemblies read in from --input
-    reads      // channel: reads read in from --reads
+    assemblies // channel: data for accession in samplesheet
     outdir     // channel: output directory
 
     main:
@@ -39,7 +38,6 @@ workflow SANGERTOL_GENOMEPROFILING {
     //
     GENOMEPROFILING (
         assemblies,
-        reads,
         outdir,
     )
 
@@ -83,7 +81,7 @@ workflow {
         params.monochrome_logs,
         args,
         params.outdir,
-        params.input,
+        params.samplesheet,
         params.help,
         params.help_full,
         params.show_hidden
@@ -94,7 +92,6 @@ workflow {
     //
     SANGERTOL_GENOMEPROFILING (
         PIPELINE_INITIALISATION.out.assemblies,
-        PIPELINE_INITIALISATION.out.longreads,
         params.outdir
     )
     //

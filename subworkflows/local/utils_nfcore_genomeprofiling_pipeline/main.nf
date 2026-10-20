@@ -85,18 +85,26 @@ workflow PIPELINE_INITIALISATION {
     //
     // Create channel from input file provided through params.input
     //
-    ch_assemblies = channel.of(
-        tuple( [ id: params.sample ], params.input)
+    ch_sample_data = channel.fromList(
+        samplesheetToList(input, "${projectDir}/assets/samplesheet_schema.json")
     )
-
-    ch_longreads = channel.of(
-        tuple( [ id: params.sample ], params.longreads)
-    )
+    .flatten()
+    .map { meta ->
+        tuple(
+            [
+                id: meta.accession,
+                ploidy: meta.ploidy,
+                initial_cov: meta.in_cov,
+                kmer_length: meta.kmer_length
+            ],
+            meta.assemblies,
+            meta.reads
+        )
+    }
 
 
     emit:
-    assemblies  = ch_assemblies
-    longreads   = ch_longreads
+    assemblies  = ch_sample_data
     versions    = ch_versions
 }
 
