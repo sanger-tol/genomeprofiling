@@ -7,7 +7,7 @@
                 "nf-core": {
                     "busco/busco": {
                         "branch": "master",
-                        "git_sha": "3927a974459b80b8e24d73e00da029e8c7335c4d",
+                        "git_sha": "5d0b9662e1ba73bd252d1f27978d2633174176ff",
                         "installed_by": ["genome_statistics"]
                     },
                     "fastk/fastk": {
@@ -42,22 +42,22 @@
                     },
                     "samtools/dict": {
                         "branch": "master",
-                        "git_sha": "9339809fcb90af8a8b7051e6cd914894d5c52002",
+                        "git_sha": "5f344f0e41fdfaf2506f89400e42a2689d6ab323",
                         "installed_by": ["fasta_clean_faidx"]
                     },
                     "samtools/faidx": {
                         "branch": "master",
-                        "git_sha": "9339809fcb90af8a8b7051e6cd914894d5c52002",
+                        "git_sha": "5f344f0e41fdfaf2506f89400e42a2689d6ab323",
                         "installed_by": ["fasta_clean_faidx"]
                     },
                     "seqkit/replace": {
                         "branch": "master",
-                        "git_sha": "d07a945f421a4a91ce4e5a22db63e0e7f8741607",
+                        "git_sha": "8fff8cfa10626a5acb7652f2212dec0cbc18b47e",
                         "installed_by": ["fasta_clean_faidx"]
                     },
                     "seqkit/seq": {
                         "branch": "master",
-                        "git_sha": "d07a945f421a4a91ce4e5a22db63e0e7f8741607",
+                        "git_sha": "8fff8cfa10626a5acb7652f2212dec0cbc18b47e",
                         "installed_by": ["fasta_clean_faidx"]
                     },
                     "smudgeplot/all": {
