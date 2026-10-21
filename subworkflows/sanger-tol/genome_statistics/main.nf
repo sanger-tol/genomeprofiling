@@ -25,7 +25,6 @@ workflow GENOME_STATISTICS {
     //
     // Logic: haplotypes into independent channels
     //
-
     ch_assemblies_split = ch_assemblies
         .flatMap { meta, asms ->
             asms
