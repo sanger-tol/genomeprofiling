@@ -1,9 +1,9 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    sanger-tol/fastk_genome_statistics
+    sanger-tol/genomeprofiling
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/sanger-tol/fastk_genome_statistics
+    Github : https://github.com/sanger-tol/genomeprofiling
 ----------------------------------------------------------------------------------------
 */
 
@@ -13,9 +13,9 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { FASTK_GENOME_STATISTICS  } from './workflows/fastk_genome_statistics'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_fastk_genome_statistics_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_fastk_genome_statistics_pipeline'
+include { GENOMEPROFILING           } from './workflows/genomeprofiling'
+include { PIPELINE_INITIALISATION   } from './subworkflows/local/utils_nfcore_genomeprofiling_pipeline'
+include { PIPELINE_COMPLETION       } from './subworkflows/local/utils_nfcore_genomeprofiling_pipeline'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
@@ -25,20 +25,54 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_fast
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow SANGERTOL_FASTK_GENOME_STATISTICS {
+workflow SANGERTOL_GENOMEPROFILING {
 
     take:
-    samplesheet // channel: samplesheet read in from --input
+    assemblies      // channel: data for accession in samplesheet
+    replace_dots    // boolean: replace dots in sequence headers with underscores
+    run_genomescope // boolean: run genomescope
+    run_histex      // boolean: run histex
+    outdir          // channel: output directory
 
     main:
 
     //
     // WORKFLOW: Run pipeline
     //
-    FASTK_GENOME_STATISTICS (
-        samplesheet,
-        params.outdir,
+    GENOMEPROFILING (
+        assemblies,
+        replace_dots,
+        run_genomescope,
+        run_histex,
+        outdir,
     )
+
+    emit:
+    gs_stats                    = GENOMEPROFILING.out.gs_stats
+    gs_asmstats                 = GENOMEPROFILING.out.gs_asmstats
+    gs_gfastats                 = GENOMEPROFILING.out.gs_gfastats
+    gs_merqury                  = GENOMEPROFILING.out.gs_merqury
+    gs_merqury_qv               = GENOMEPROFILING.out.gs_merqury_qv
+    gs_merqury_completeness     = GENOMEPROFILING.out.gs_merqury_completeness
+    gs_merqury_phased_stats     = GENOMEPROFILING.out.gs_merqury_phased_stats
+    gs_merqury_images           = GENOMEPROFILING.out.gs_merqury_images
+    fastk_ktabs                 = GENOMEPROFILING.out.fastk_ktabs
+    fastk_hist                  = GENOMEPROFILING.out.fastk_hist
+    genomescope_lin_plot        = GENOMEPROFILING.out.genomescope_lin_plot
+    genomescope_trans_lin_plot  = GENOMEPROFILING.out.genomescope_trans_lin_plot
+    genomescope_log_plot        = GENOMEPROFILING.out.genomescope_log_plot
+    genomescope_trans_log_plot  = GENOMEPROFILING.out.genomescope_trans_log_plot
+    genomescope_model           = GENOMEPROFILING.out.genomescope_model
+    genomescope_summary         = GENOMEPROFILING.out.genomescope_summary
+    genomescope_json_report     = GENOMEPROFILING.out.genomescope_json_report
+    smudgeplot_report           = GENOMEPROFILING.out.smudgeplot_report
+    smudgeplot_png              = GENOMEPROFILING.out.smudgeplot_png
+    smudgeplot_centrality_txt   = GENOMEPROFILING.out.smudgeplot_centrality_txt
+    fasta_fai                   = GENOMEPROFILING.out.input_fai_cleaned
+    fasta_file                  = GENOMEPROFILING.out.input_fasta_cleaned
+    sizes_file                  = GENOMEPROFILING.out.input_sizes_cleaned
+    dict_file                   = GENOMEPROFILING.out.input_dict_cleaned
+    desc_file                   = GENOMEPROFILING.out.input_desc_cleaned
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -67,8 +101,12 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    SANGERTOL_FASTK_GENOME_STATISTICS (
-        PIPELINE_INITIALISATION.out.samplesheet
+    SANGERTOL_GENOMEPROFILING (
+        PIPELINE_INITIALISATION.out.assemblies,
+        params.replace_dots,
+        params.run_genomescope,
+        params.run_histex,
+        params.outdir
     )
     //
     // SUBWORKFLOW: Run completion tasks
@@ -80,6 +118,138 @@ workflow {
         params.outdir,
         params.monochrome_logs,
     )
+
+    publish:
+    gs_stats                    = SANGERTOL_GENOMEPROFILING.out.gs_stats
+    gs_asmstats                 = SANGERTOL_GENOMEPROFILING.out.gs_asmstats
+    gs_gfastats                 = SANGERTOL_GENOMEPROFILING.out.gs_gfastats
+    gs_merqury                  = SANGERTOL_GENOMEPROFILING.out.gs_merqury
+    gs_merqury_qv               = SANGERTOL_GENOMEPROFILING.out.gs_merqury_qv
+    gs_merqury_completeness     = SANGERTOL_GENOMEPROFILING.out.gs_merqury_completeness
+    gs_merqury_phased_stats     = SANGERTOL_GENOMEPROFILING.out.gs_merqury_phased_stats
+    gs_merqury_images           = SANGERTOL_GENOMEPROFILING.out.gs_merqury_images
+    fastk_ktabs                 = SANGERTOL_GENOMEPROFILING.out.fastk_ktabs
+    fastk_hist                  = SANGERTOL_GENOMEPROFILING.out.fastk_hist
+    genomescope_lin_plot        = SANGERTOL_GENOMEPROFILING.out.genomescope_lin_plot
+    genomescope_trans_lin_plot  = SANGERTOL_GENOMEPROFILING.out.genomescope_trans_lin_plot
+    genomescope_log_plot        = SANGERTOL_GENOMEPROFILING.out.genomescope_log_plot
+    genomescope_trans_log_plot  = SANGERTOL_GENOMEPROFILING.out.genomescope_trans_log_plot
+    genomescope_model           = SANGERTOL_GENOMEPROFILING.out.genomescope_model
+    genomescope_summary         = SANGERTOL_GENOMEPROFILING.out.genomescope_summary
+    genomescope_json_report     = SANGERTOL_GENOMEPROFILING.out.genomescope_json_report
+    smudgeplot_report           = SANGERTOL_GENOMEPROFILING.out.smudgeplot_report
+    smudgeplot_png              = SANGERTOL_GENOMEPROFILING.out.smudgeplot_png
+    smudgeplot_centrality_txt   = SANGERTOL_GENOMEPROFILING.out.smudgeplot_centrality_txt
+    fasta_fai                   = SANGERTOL_GENOMEPROFILING.out.fasta_fai
+    fasta_file                  = SANGERTOL_GENOMEPROFILING.out.fasta_file
+    sizes_file                  = SANGERTOL_GENOMEPROFILING.out.sizes_file
+    dict_file                   = SANGERTOL_GENOMEPROFILING.out.dict_file
+    desc_file                   = SANGERTOL_GENOMEPROFILING.out.desc_file
+}
+
+output {
+
+    // NOTE: EARLY IN THE PIPELINE idx IS USED TO DENOTE HAPLOTYPE
+    //       ASSUMING HAPLOTYPE 0 IS THE REFERENCE
+    fasta_fai {
+        path { meta, _file -> "${meta.id}_hap${meta.idx}/fasta_data/"}
+    }
+
+    fasta_file {
+        path { meta, _file -> "${meta.id}_hap${meta.idx}/fasta_data/"}
+    }
+
+    sizes_file {
+        path { meta, _file -> "${meta.id}_hap${meta.idx}/fasta_data/"}
+    }
+
+    dict_file {
+        path { meta, _file -> "${meta.id}_hap${meta.idx}/fasta_data/"}
+    }
+
+    desc_file {
+        path { meta, _file -> "${meta.id}_hap${meta.idx}/fasta_data/"}
+    }
+
+    gs_stats {
+        path { meta, _file -> "${meta.id}_${meta._hap}/statistics/"}
+    }
+
+    gs_asmstats {
+        path { meta, _file -> "${meta.id}_${meta._hap}/statistics/"}
+    }
+
+    gs_gfastats {
+        path { meta, _file -> "${meta.id}_${meta._hap}/statistics/"}
+    }
+
+    gs_merqury {
+        path { meta, _file -> "${meta.id}_${meta._hap}/merqury/"}
+    }
+
+    gs_merqury_phased_stats {
+        path { meta, _file -> "${meta.id}_${meta._hap}/merqury/"}
+    }
+
+    gs_merqury_qv {
+        path { meta, _file -> "${meta.id}_${meta._hap}/merqury/"}
+    }
+
+    gs_merqury_completeness {
+        path { meta, _file -> "${meta.id}_${meta._hap}/merqury/"}
+    }
+
+    gs_merqury_images {
+        path { meta, _file -> "${meta.id}_${meta._hap}/merqury/"}
+    }
+
+    fastk_ktabs {
+        path { meta, _files -> "${meta.id}_ALL/fastk/"}
+    }
+
+    fastk_hist {
+        path { meta, _file -> "${meta.id}_ALL/fastk/"}
+    }
+
+    genomescope_lin_plot {
+        path { meta, _file -> "${meta.id}_ALL/genomescope/"}
+    }
+
+    genomescope_trans_lin_plot {
+        path { meta, _file -> "${meta.id}_ALL/genomescope/"}
+    }
+
+    genomescope_log_plot {
+        path { meta, _file -> "${meta.id}_ALL/genomescope/"}
+    }
+
+    genomescope_trans_log_plot {
+        path { meta, _file -> "${meta.id}_ALL/genomescope/"}
+    }
+
+    genomescope_model {
+        path { meta, _file -> "${meta.id}_ALL/genomescope/"}
+    }
+
+    genomescope_summary {
+        path { meta, _file -> "${meta.id}_ALL/genomescope/"}
+    }
+
+    genomescope_json_report {
+        path { meta, _file -> "${meta.id}_ALL/genomescope/"}
+    }
+
+    smudgeplot_report {
+        path { meta, _file -> "${meta.id}_ALL/smudgeplot/"}
+    }
+
+    smudgeplot_png {
+        path { meta, _file -> "${meta.id}_ALL/smudgeplot/"}
+    }
+
+    smudgeplot_centrality_txt {
+        path { meta, _file -> "${meta.id}_ALL/smudgeplot/"}
+    }
 }
 
 /*

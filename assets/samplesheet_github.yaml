@@ -1,0 +1,9 @@
+- accession: GCA_014284275.1
+  ploidy: 2
+  initial_coverage: 50
+  kmer_length: 31
+  assemblies:
+    - https://tolit.cog.sanger.ac.uk/test-data/Undibacterium_unclassified/assembly/draft/baUndUnlc1.bp.hap1.p_ctg.fa.gz
+    - https://tolit.cog.sanger.ac.uk/test-data/Undibacterium_unclassified/assembly/draft/baUndUnlc1.bp.hap2.p_ctg.fa.gz
+  reads:
+    - https://tolit.cog.sanger.ac.uk/test-data/Undibacterium_unclassified/genomic_data/baUndUnlc1/pacbio/fasta/HiFi.reads.fasta

@@ -1,0 +1,13 @@
+- accession: GCA_984589145.1
+  ploidy: 2
+  initial_coverage: 50
+  kmer_length: 31
+  assemblies:
+    - /lustre/scratch122/tol/data/1/7/6/c/c/5/Vazella_cf_pourtalesii/assembly/curated/ohVazPour4.1/ohVazPour4.hap1.1.primary.curated.fa
+    - /lustre/scratch122/tol/data/1/7/6/c/c/5/Vazella_cf_pourtalesii/assembly/curated/ohVazPour4.1/ohVazPour4.hap2.1.primary.curated.fa
+  reads:
+    - /lustre/scratch122/tol/data/1/7/6/c/c/5/Vazella_cf_pourtalesii/genomic_data/ohVazPour4/pacbio/fasta/m84047_241009_102216_s1.ccs.bc2075.trim.fasta.gz
+    - /lustre/scratch122/tol/data/1/7/6/c/c/5/Vazella_cf_pourtalesii/genomic_data/ohVazPour4/pacbio/fasta/m84093_241108_221246_s4.ccs.bc2075.trim.fasta.gz
+    - /lustre/scratch122/tol/data/1/7/6/c/c/5/Vazella_cf_pourtalesii/genomic_data/ohVazPour4/pacbio/fasta/m84093_250207_123939_s3.ccs.bc2075.trim.fasta.gz
+    - /lustre/scratch122/tol/data/1/7/6/c/c/5/Vazella_cf_pourtalesii/genomic_data/ohVazPour4/pacbio/fasta/m84098_250508_112748_s2.ccs.bc2006.rmdup.trim.fasta.gz
+    - /lustre/scratch122/tol/data/1/7/6/c/c/5/Vazella_cf_pourtalesii/genomic_data/ohVazPour4/pacbio/fasta/m84309_250422_105411_s1.ccs.bc2075.trim.fasta.gz

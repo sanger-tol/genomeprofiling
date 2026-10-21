@@ -1,5 +1,5 @@
 //
-// Subworkflow with functionality specific to the sanger-tol/fastk_genome_statistics pipeline
+// Subworkflow with functionality specific to the sanger-tol/genomeprofiling pipeline
 //
 
 /*
@@ -60,7 +60,7 @@ workflow PIPELINE_INITIALISATION {
         before_text = before_text.replaceAll(/\033\[[0-9;]*m/, '')
     }
 
-    command = "nextflow run ${workflow.manifest.name} -profile <docker/singularity/.../institute> --input samplesheet.csv --outdir <OUTDIR>"
+    command = "nextflow run ${workflow.manifest.name} -profile <docker/singularity/.../institute> --input <FASTA> --outdir <OUTDIR>"
 
     UTILS_NFSCHEMA_PLUGIN (
         workflow,
@@ -85,29 +85,26 @@ workflow PIPELINE_INITIALISATION {
     //
     // Create channel from input file provided through params.input
     //
+    ch_sample_data = channel.fromList(
+        samplesheetToList(input, "${projectDir}/assets/samplesheet_schema.json")
+    )
+    .flatten()
+    .map { meta ->
+        tuple(
+            [
+                id: meta.accession,
+                ploidy: meta.ploidy,
+                initial_cov: meta.in_cov,
+                kmer_length: meta.kmer_length
+            ],
+            meta.assemblies,
+            meta.reads
+        )
+    }
 
-    channel
-        .fromList(samplesheetToList(input, "${projectDir}/assets/schema_input.json"))
-        .map {
-            meta, fastq_1, fastq_2 ->
-                if (!fastq_2) {
-                    return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
-                } else {
-                    return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
-                }
-        }
-        .groupTuple()
-        .map { samplesheet ->
-            validateInputSamplesheet(samplesheet)
-        }
-        .map {
-            meta, fastqs ->
-                return [ meta, fastqs.flatten() ]
-        }
-        .set { ch_samplesheet }
 
     emit:
-    samplesheet = ch_samplesheet
+    assemblies  = ch_sample_data
     versions    = ch_versions
 }
 
