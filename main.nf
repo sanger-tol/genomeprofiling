@@ -29,9 +29,11 @@ workflow SANGERTOL_GENOMEPROFILING {
 
     take:
     assemblies      // channel: data for accession in samplesheet
+    reads           // channel: reads for accession in samplesheet
     replace_dots    // boolean: replace dots in sequence headers with underscores
     run_genomescope // boolean: run genomescope
     run_histex      // boolean: run histex
+    run_smudgeplot  // boolean: run smudgeplot
     outdir          // channel: output directory
 
     main:
@@ -41,9 +43,11 @@ workflow SANGERTOL_GENOMEPROFILING {
     //
     GENOMEPROFILING (
         assemblies,
+        reads,
         replace_dots,
         run_genomescope,
         run_histex,
+        run_smudgeplot,
         outdir,
     )
 
@@ -103,9 +107,11 @@ workflow {
     //
     SANGERTOL_GENOMEPROFILING (
         PIPELINE_INITIALISATION.out.assemblies,
+        PIPELINE_INITIALISATION.out.reads,
         params.replace_dots,
         params.run_genomescope,
         params.run_histex,
+        params.run_smudgeplot,
         params.outdir
     )
     //

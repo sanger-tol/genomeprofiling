@@ -31,33 +31,23 @@ workflow GENOMEPROFILING {
 
     take:
     ch_assemblies       // channel: [meta, [assemblies...]]
+    ch_reads
     dots_to_underscores // boolean: replace dots with underscores in sample names
     run_genomescope     // boolean: run genomescope
     run_histex          // boolean: run histex
+    run_smudgeplot      // boolean: run smudgeplot
     outdir              // output directory
 
     main:
 
     def ch_versions = channel.empty()
 
-    ch_data         = ch_assemblies
-        .multiMap { meta, assemblies, reads ->
-            // NOTE: BREAK DOWN THE LIST OF ASSEMBLIES INTO TUPLES OF (meta, assembly)
-            assemblies: assemblies.withIndex().collect{ assembly, idx ->
-                def new_meta = meta + [ idx: idx ]
-                tuple(new_meta, file(assembly))
-            }
-            reads: tuple(meta, reads)
-        }
-
-    ch_assembly      = ch_data.assemblies.flatMap{ data -> data }
-
 
     //
     // SUBWORKFLOW: UNZIP, CLEAN AND INDEX THE ASSEMBLIES
     //
     FASTA_CLEAN_FAIDX(
-        ch_assembly,
+        ch_assemblies,
         dots_to_underscores,
         true,
         true
@@ -68,7 +58,7 @@ workflow GENOMEPROFILING {
     // MODULE: RUN FASTK FOR KMER COUNTS AND HISTS
     //
     FASTK_FASTK(
-        ch_data.reads
+        ch_reads
     )
 
 
@@ -92,7 +82,7 @@ workflow GENOMEPROFILING {
     // MODULE: RUN HETMERS TO COLLECT DATA NEEDED FOR SMUDGEPLOT
     //
     SMUDGEPLOT_HETMERS(
-        FASTK_FASTK.out.ktab
+        FASTK_FASTK.out.ktab.filter { _meta, _ktab -> run_smudgeplot}
     )
 
 
@@ -123,7 +113,7 @@ workflow GENOMEPROFILING {
         .map { meta_base, indices, fastas ->
             // Sort by index
             def sorted = [indices, fastas].transpose()
-                .sort { it[0] }
+                .sort { it -> it[0] }
                 .collect { meta, file -> file }
             tuple(meta_base, sorted)
         }

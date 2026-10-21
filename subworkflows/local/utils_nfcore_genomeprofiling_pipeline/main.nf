@@ -60,7 +60,7 @@ workflow PIPELINE_INITIALISATION {
         before_text = before_text.replaceAll(/\033\[[0-9;]*m/, '')
     }
 
-    command = "nextflow run ${workflow.manifest.name} -profile <docker/singularity/.../institute> --input <FASTA> --outdir <OUTDIR>"
+    command = "nextflow run ${workflow.manifest.name} -profile <docker/singularity/.../institute> --input samplesheet.yml --outdir <OUTDIR>"
 
     UTILS_NFSCHEMA_PLUGIN (
         workflow,
@@ -85,26 +85,24 @@ workflow PIPELINE_INITIALISATION {
     //
     // Create channel from input file provided through params.input
     //
-    ch_sample_data = channel.fromList(
-        samplesheetToList(input, "${projectDir}/assets/samplesheet_schema.json")
-    )
-    .flatten()
-    .map { meta ->
-        tuple(
-            [
-                id: meta.accession,
-                ploidy: meta.ploidy,
-                initial_cov: meta.in_cov,
-                kmer_length: meta.kmer_length
-            ],
-            meta.assemblies,
-            meta.reads
-        )
-    }
+    def samplesheet = samplesheetToList(input, "${projectDir}/assets/samplesheet_schema.json")
+    // each entry: [ meta, [assemblies], [reads] ]
+
+    ch_reads = channel.fromList(samplesheet)
+        .map { meta, _assemblies, reads -> tuple(meta, reads) }
+
+    ch_assemblies = channel.fromList(samplesheet)
+        .flatMap { meta, assemblies, _reads ->
+            // INSERT THE idx, EFFECTIVELY THE HAP NUMBER
+            assemblies.withIndex().collect { assembly, idx ->
+                tuple(meta + [ idx: idx ], file(assembly))
+            }
+        }
 
 
     emit:
-    assemblies  = ch_sample_data
+    assemblies  = ch_assemblies
+    reads       = ch_reads
     versions    = ch_versions
 }
 

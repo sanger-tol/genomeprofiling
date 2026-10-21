@@ -12,13 +12,8 @@ Initial release of sanger-tol/genomeprofiling, created with the [nf-core](https:
 - Added the `sanger-tol/genomeprofiling` subworkflow
   - This includes the `nf-core` modules `BUSCO_BUSCO`, `GFASTATS`, and `MERQURYFK_MERQURYFK`
   - This includes the `sanger-tol` module `ASMSTATS`
-- Added `nf-core` modules `GENOMESCOPE2`, `FASTK_FASTK` and `FASTK_HISTEX`
-- Added the local modules `SMUDGEPLOT_HETMETS` and `SMUDGEPLOT_ALL`
-  - These will be submitted to `nf-core`
-- `--sample` parameter to specify the sample name
-- `--fasta` parameter to specify the FASTA file
-- `--kmer_length` parameter to specify the length of k-mer to use in analysis
-- `--longreads` parameter to specify the long reads files in use
+- Added `nf-core` modules `GENOMESCOPE2`, `FASTK_FASTK`, `FASTK_HISTEX`, `SMUDGEPLOT_HETMERS` and `SMUDGEPLOT_ALL`
+- Added param `--input` path to the input samplesheet file
 - Adopted the workflow_output system
 
 ### `Dependencies`

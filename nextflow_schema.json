@@ -38,6 +38,12 @@
                     "default": true,
                     "fa_icon": ""
                 },
+                "run_smudgeplot": {
+                    "type": "boolean",
+                    "description": "Run SmudgePlot on the input reads",
+                    "default": true,
+                    "fa_icon": ""
+                },
                 "replace_dots": {
                     "type": "boolean",
                     "description": "Replace dots in sequence headers with underscores",

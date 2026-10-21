@@ -10,15 +10,14 @@
             "accession": {
                 "type": "string",
                 "description": "Accession number of the sample",
-                "meta": "accession"
+                "meta": "id"
             },
             "assemblies": {
                 "type": "array",
                 "items": {
                     "type": "string",
                     "description": "Assembly fasta file list"
-                },
-                "meta": "assemblies"
+                }
             },
             "reads": {
                 "type": "array",
@@ -26,8 +25,7 @@
                     "type": "string",
                     "description": "Longread file list required for fastk database generation"
                 },
-                "pattern": "^.*(fasta|fastq)$",
-                "meta": "reads"
+                "pattern": "^.*(fasta|fastq)$"
             },
             "initial_coverage": {
                 "type": "integer",
