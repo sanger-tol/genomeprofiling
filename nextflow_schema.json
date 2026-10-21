@@ -10,9 +10,9 @@
             "type": "object",
             "fa_icon": "fas fa-terminal",
             "description": "Define where the pipeline should find input data and save output data.",
-            "required": ["samplesheet"],
+            "required": ["input"],
             "properties": {
-                "samplesheet": {
+                "input": {
                     "type": "string",
                     "description": "Samplesheet path",
                     "help_text": "Path to the samplesheet",
@@ -36,6 +36,12 @@
                     "type": "boolean",
                     "description": "Run HistEx on the input reads",
                     "default": true,
+                    "fa_icon": ""
+                },
+                "replace_dots": {
+                    "type": "boolean",
+                    "description": "Replace dots in sequence headers with underscores",
+                    "default": false,
                     "fa_icon": ""
                 },
                 "email": {

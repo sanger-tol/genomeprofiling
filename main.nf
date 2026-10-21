@@ -28,8 +28,11 @@ include { PIPELINE_COMPLETION       } from './subworkflows/local/utils_nfcore_ge
 workflow SANGERTOL_GENOMEPROFILING {
 
     take:
-    assemblies // channel: data for accession in samplesheet
-    outdir     // channel: output directory
+    assemblies      // channel: data for accession in samplesheet
+    replace_dots    // boolean: replace dots in sequence headers with underscores
+    run_genomescope // boolean: run genomescope
+    run_histex      // boolean: run histex
+    outdir          // channel: output directory
 
     main:
 
@@ -38,6 +41,9 @@ workflow SANGERTOL_GENOMEPROFILING {
     //
     GENOMEPROFILING (
         assemblies,
+        replace_dots,
+        run_genomescope,
+        run_histex,
         outdir,
     )
 
@@ -62,6 +68,11 @@ workflow SANGERTOL_GENOMEPROFILING {
     smudgeplot_report           = GENOMEPROFILING.out.smudgeplot_report
     smudgeplot_png              = GENOMEPROFILING.out.smudgeplot_png
     smudgeplot_centrality_txt   = GENOMEPROFILING.out.smudgeplot_centrality_txt
+    fasta_fai                   = GENOMEPROFILING.out.input_fai_cleaned
+    fasta_file                  = GENOMEPROFILING.out.input_fasta_cleaned
+    sizes_file                  = GENOMEPROFILING.out.input_sizes_cleaned
+    dict_file                   = GENOMEPROFILING.out.input_dict_cleaned
+    desc_file                   = GENOMEPROFILING.out.input_desc_cleaned
 }
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -81,7 +92,7 @@ workflow {
         params.monochrome_logs,
         args,
         params.outdir,
-        params.samplesheet,
+        params.input,
         params.help,
         params.help_full,
         params.show_hidden
@@ -92,6 +103,9 @@ workflow {
     //
     SANGERTOL_GENOMEPROFILING (
         PIPELINE_INITIALISATION.out.assemblies,
+        params.replace_dots,
+        params.run_genomescope,
+        params.run_histex,
         params.outdir
     )
     //
@@ -126,9 +140,37 @@ workflow {
     smudgeplot_report           = SANGERTOL_GENOMEPROFILING.out.smudgeplot_report
     smudgeplot_png              = SANGERTOL_GENOMEPROFILING.out.smudgeplot_png
     smudgeplot_centrality_txt   = SANGERTOL_GENOMEPROFILING.out.smudgeplot_centrality_txt
+    fasta_fai                   = SANGERTOL_GENOMEPROFILING.out.fasta_fai
+    fasta_file                  = SANGERTOL_GENOMEPROFILING.out.fasta_file
+    sizes_file                  = SANGERTOL_GENOMEPROFILING.out.sizes_file
+    dict_file                   = SANGERTOL_GENOMEPROFILING.out.dict_file
+    desc_file                   = SANGERTOL_GENOMEPROFILING.out.desc_file
 }
 
 output {
+
+    // NOTE: EARLY IN THE PIPELINE idx IS USED TO DENOTE HAPLOTYPE
+    //       ASSUMING HAPLOTYPE 0 IS THE REFERENCE
+    fasta_fai {
+        path { meta, _file -> "${meta.id}_hap${meta.idx}/fasta_data/"}
+    }
+
+    fasta_file {
+        path { meta, _file -> "${meta.id}_hap${meta.idx}/fasta_data/"}
+    }
+
+    sizes_file {
+        path { meta, _file -> "${meta.id}_hap${meta.idx}/fasta_data/"}
+    }
+
+    dict_file {
+        path { meta, _file -> "${meta.id}_hap${meta.idx}/fasta_data/"}
+    }
+
+    desc_file {
+        path { meta, _file -> "${meta.id}_hap${meta.idx}/fasta_data/"}
+    }
+
     gs_stats {
         path { meta, _file -> "${meta.id}_${meta._hap}/statistics/"}
     }

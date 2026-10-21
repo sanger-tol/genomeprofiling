@@ -30,8 +30,11 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_geno
 workflow GENOMEPROFILING {
 
     take:
-    ch_assemblies   // channel: [meta, [assemblies...]]
-    outdir          // output directory
+    ch_assemblies       // channel: [meta, [assemblies...]]
+    dots_to_underscores // boolean: replace dots with underscores in sample names
+    run_genomescope     // boolean: run genomescope
+    run_histex          // boolean: run histex
+    outdir              // output directory
 
     main:
 
@@ -55,7 +58,7 @@ workflow GENOMEPROFILING {
     //
     FASTA_CLEAN_FAIDX(
         ch_assembly,
-        false,
+        dots_to_underscores,
         true,
         true
     )
@@ -73,7 +76,7 @@ workflow GENOMEPROFILING {
     // MODULE: RUN FASTK HISTEX TO CONVERT .hist TO .txt
     //
     FASTK_HISTEX(
-        FASTK_FASTK.out.hist.filter { _meta, _hist -> params.run_histex}
+        FASTK_FASTK.out.hist.filter { _meta, _hist -> run_histex}
     )
 
 
@@ -81,7 +84,7 @@ workflow GENOMEPROFILING {
     // MODULE: RUN GENOMESCOPE2 TO GENERATE GENOME SCOPE PLOTS
     //
     GENOMESCOPE2(
-        FASTK_HISTEX.out.hist.filter { _meta, _hist -> params.run_genomescope}
+        FASTK_HISTEX.out.hist.filter { _meta, _hist -> run_genomescope}
     )
 
 
@@ -120,8 +123,8 @@ workflow GENOMEPROFILING {
         .map { meta_base, indices, fastas ->
             // Sort by index
             def sorted = [indices, fastas].transpose()
-                .sort { idx, file -> idx }
-                .collect { idx, file -> file }
+                .sort { it[0] }
+                .collect { meta, file -> file }
             tuple(meta_base, sorted)
         }
 
@@ -190,6 +193,11 @@ workflow GENOMEPROFILING {
     smudgeplot_report           = SMUDGEPLOT_ALL.out.smudge_report
     smudgeplot_png              = SMUDGEPLOT_ALL.out.png
     smudgeplot_centrality_txt   = SMUDGEPLOT_ALL.out.centrality_txt
+    input_fasta_cleaned         = FASTA_CLEAN_FAIDX.out.reference
+    input_fai_cleaned           = FASTA_CLEAN_FAIDX.out.fai
+    input_sizes_cleaned         = FASTA_CLEAN_FAIDX.out.sizes
+    input_dict_cleaned          = FASTA_CLEAN_FAIDX.out.dict
+    input_desc_cleaned          = FASTA_CLEAN_FAIDX.out.sequence_description
 
     versions                    = ch_collated_versions                 // channel: [ path(versions.yml) ]
 }
