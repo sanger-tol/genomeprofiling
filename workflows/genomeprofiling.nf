@@ -8,8 +8,8 @@
 include { FASTK_FASTK            } from '../modules/nf-core/fastk/fastk/main'
 include { FASTK_HISTEX           } from '../modules/nf-core/fastk/histex/main'
 include { GENOMESCOPE2           } from '../modules/nf-core/genomescope2/main'
-include { SMUDGEPLOT_HETMERS     } from '../modules/local/smudgeplot/hetmers/main'
-include { SMUDGEPLOT_ALL         } from '../modules/local/smudgeplot/all/main'
+include { SMUDGEPLOT_HETMERS     } from '../modules/nf-core/smudgeplot/hetmers/main'
+include { SMUDGEPLOT_ALL         } from '../modules/nf-core/smudgeplot/all/main'
 
 // SANGER-TOL SUBWORKFLOW IMPORTS
 include { GENOME_STATISTICS      } from '../subworkflows/sanger-tol/genome_statistics/main'
@@ -47,7 +47,7 @@ workflow GENOMEPROFILING {
             reads: tuple(meta, reads)
         }
 
-    ch_assembly      = ch_data.assemblies.flatMap{it}
+    ch_assembly      = ch_data.assemblies.flatMap{ data -> data }
 
 
     //
@@ -120,8 +120,8 @@ workflow GENOMEPROFILING {
         .map { meta_base, indices, fastas ->
             // Sort by index
             def sorted = [indices, fastas].transpose()
-                .sort { it[0] }
-                .collect { it[1] }
+                .sort { idx, file -> idx }
+                .collect { idx, file -> file }
             tuple(meta_base, sorted)
         }
 

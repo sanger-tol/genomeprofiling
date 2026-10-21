@@ -59,6 +59,16 @@
                         "branch": "master",
                         "git_sha": "d07a945f421a4a91ce4e5a22db63e0e7f8741607",
                         "installed_by": ["fasta_clean_faidx"]
+                    },
+                    "smudgeplot/all": {
+                        "branch": "master",
+                        "git_sha": "2b8500257dff6f19410339d7e787b0d22253f706",
+                        "installed_by": ["modules"]
+                    },
+                    "smudgeplot/hetmers": {
+                        "branch": "master",
+                        "git_sha": "2b8500257dff6f19410339d7e787b0d22253f706",
+                        "installed_by": ["modules"]
                     }
                 }
             },

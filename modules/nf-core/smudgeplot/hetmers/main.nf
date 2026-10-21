@@ -1,4 +1,4 @@
-process SMUDGEPLOT_ALL {
+process SMUDGEPLOT_HETMERS {
     tag "${meta.id}"
     label 'process_single'
 
@@ -8,14 +8,11 @@ process SMUDGEPLOT_ALL {
         'community.wave.seqera.io/library/fastk_smudgeplot:1352fed7dbb39646' }"
 
     input:
-    tuple val(meta), path(smu)
+    tuple val(meta), path(fastk_table, stageAs: "ktab_dir/*")
 
     output:
-    tuple val(meta), path("*.png"), emit: png
-    tuple val(meta), path("*_centralities.txt"), emit: centrality_txt
-    tuple val(meta), path("*.smudge_report.tsv"), emit: smudge_report
-    tuple val(meta), path("*.sma"), emit: sma
-    tuple val("${task.process}"), val('smudgeplot'), eval('smudgeplot -v |& sed "s/.*v//"'), emit: versions_smudgeplot, topic: versions
+    tuple val(meta), path("*.smu"), emit: kmer_cov
+    tuple val("${task.process}"), val('smudgeplot'), eval('smudgeplot -v |& grep "smudgeplot" | sed "s/.*v//"'), emit: versions_smudgeplot, topic: versions
     // FASTK does not report version to cli
     tuple val("${task.process}"), val('fastk'), val('1.2'), emit: versions_fastk, topic: versions
 
@@ -26,15 +23,11 @@ process SMUDGEPLOT_ALL {
     def args    = task.ext.args     ?: ''
     def prefix  = task.ext.prefix   ?: "${meta.id}"
 
-    // Export HOME to avoid issues with MATPLOTLIB needing a
-    // writable config directory
     """
-    export HOME=\$PWD/nxf_home
-
-    smudgeplot all \\
+    smudgeplot hetmers \\
         ${args} \\
         -o ${prefix} \\
-        ${smu}
+        ${fastk_table.find { path -> path.toString().endsWith(".ktab") }}
     """
 
     stub:
