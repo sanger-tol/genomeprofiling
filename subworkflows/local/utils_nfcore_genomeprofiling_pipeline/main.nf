@@ -1,5 +1,5 @@
 //
-// Subworkflow with functionality specific to the sanger-tol/fastk_genome_statistics pipeline
+// Subworkflow with functionality specific to the sanger-tol/genomeprofiling pipeline
 //
 
 /*
@@ -72,7 +72,7 @@ workflow PIPELINE_INITIALISATION {
         before_text,
         after_text,
         command,
-        false
+        null
     )
 
     //

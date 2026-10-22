@@ -5,7 +5,7 @@
 */
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
-include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_fastk_genome_statistics_pipeline'
+include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_genomeprofiling_pipeline'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -13,7 +13,7 @@ include { methodsDescriptionText } from '../subworkflows/local/utils_nfcore_fast
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-workflow FASTK_GENOME_STATISTICS {
+workflow GENOMEPROFILING {
 
     take:
     ch_samplesheet // channel: samplesheet read in from --input
@@ -47,7 +47,7 @@ workflow FASTK_GENOME_STATISTICS {
         .mix(topic_versions_string)
         .collectFile(
             storeDir: "${outdir}/pipeline_info",
-            name:  'fastk_genome_statistics_software_'  + 'versions.yml',
+            name:  'genomeprofiling_software_'  + 'versions.yml',
             sort: true,
             newLine: true
         )
