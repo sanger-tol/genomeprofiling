@@ -1,6 +1,6 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://raw.githubusercontent.com/sanger-tol/genomeprofiling/master/nextflow_schema.json",
+    "$id": "https://raw.githubusercontent.com/sanger-tol/genomeprofiling/main/nextflow_schema.json",
     "title": "sanger-tol/genomeprofiling pipeline parameters",
     "description": "A small pipeline to fastk and some related statistics tools",
     "type": "object",
