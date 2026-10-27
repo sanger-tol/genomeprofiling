@@ -1,41 +1,39 @@
-repository_type: pipeline
-
-nf_core_version: 4.1.0
-
 lint:
-  files_unchanged:
-    - assets/sendmail_template.txt
-    - CODE_OF_CONDUCT.md
-    - assets/nf-core-fastk_genome_statistics_logo_light.png
-    - docs/images/nf-core-fastk_genome_statistics_logo_light.png
-    - docs/images/nf-core-fastk_genome_statistics_logo_dark.png
-    - .github/ISSUE_TEMPLATE/bug_report.yml
-    - .github/PULL_REQUEST_TEMPLATE.md
-    - assets/email_template.txt
-    - docs/README.md
-  nextflow_config:
-    - manifest.name
-    - manifest.homePage
-  multiqc_config: false
   files_exist:
     - assets/multiqc_config.yml
     - conf/igenomes.config
     - conf/igenomes_ignored.config
     - CODE_OF_CONDUCT.md
-    - assets/nf-core-fastk_genome_statistics_logo_light.png
-    - docs/images/nf-core-fastk_genome_statistics_logo_light.png
-    - docs/images/nf-core-fastk_genome_statistics_logo_dark.png
+    - assets/nf-core-genomeprofiling_logo_light.png
+    - docs/images/nf-core-genomeprofiling_logo_light.png
+    - docs/images/nf-core-genomeprofiling_logo_dark.png
     - .github/ISSUE_TEMPLATE/config.yml
     - .github/workflows/awstest.yml
     - .github/workflows/awsfulltest.yml
-
+  files_unchanged:
+    - assets/sendmail_template.txt
+    - CODE_OF_CONDUCT.md
+    - assets/nf-core-genomeprofiling_logo_light.png
+    - docs/images/nf-core-genomeprofiling_logo_light.png
+    - docs/images/nf-core-genomeprofiling_logo_dark.png
+    - .github/ISSUE_TEMPLATE/bug_report.yml
+    - .github/PULL_REQUEST_TEMPLATE.md
+    - assets/email_template.txt
+    - assets/email_template.html
+    - docs/README.md
+  multiqc_config: false
+  nextflow_config:
+    - manifest.name
+    - manifest.homePage
+nf_core_version: 4.1.0
+repository_type: pipeline
 template:
-  org: sanger-tol
-  name: fastk_genome_statistics
-  description: A small pipeline to fastk and some related statistics tools
   author: DLBPointon
-  version: 0.1.0dev
-  force: true
+  description: A small pipeline to fastk and some related statistics tools
+  force: false
+  is_nfcore: false
+  name: genomeprofiling
+  org: sanger-tol
   outdir: .
   skip_features:
     - igenomes
@@ -44,4 +42,4 @@ template:
     - seqera_platform
     - gpu
     - vscode
-  is_nfcore: false
+  version: 0.1.0

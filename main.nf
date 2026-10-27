@@ -1,9 +1,9 @@
 #!/usr/bin/env nextflow
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    sanger-tol/fastk_genome_statistics
+    sanger-tol/genomeprofiling
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    Github : https://github.com/sanger-tol/fastk_genome_statistics
+    Github : https://github.com/sanger-tol/genomeprofiling
 ----------------------------------------------------------------------------------------
 */
 
@@ -13,9 +13,9 @@
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
 
-include { FASTK_GENOME_STATISTICS  } from './workflows/fastk_genome_statistics'
-include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_fastk_genome_statistics_pipeline'
-include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_fastk_genome_statistics_pipeline'
+include { GENOMEPROFILING  } from './workflows/genomeprofiling'
+include { PIPELINE_INITIALISATION } from './subworkflows/local/utils_nfcore_genomeprofiling_pipeline'
+include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_genomeprofiling_pipeline'
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     NAMED WORKFLOWS FOR PIPELINE
@@ -25,7 +25,7 @@ include { PIPELINE_COMPLETION     } from './subworkflows/local/utils_nfcore_fast
 //
 // WORKFLOW: Run main analysis pipeline depending on type of input
 //
-workflow SANGERTOL_FASTK_GENOME_STATISTICS {
+workflow SANGERTOL_GENOMEPROFILING {
 
     take:
     samplesheet // channel: samplesheet read in from --input
@@ -35,7 +35,7 @@ workflow SANGERTOL_FASTK_GENOME_STATISTICS {
     //
     // WORKFLOW: Run pipeline
     //
-    FASTK_GENOME_STATISTICS (
+    GENOMEPROFILING (
         samplesheet,
         params.outdir,
     )
@@ -67,7 +67,7 @@ workflow {
     //
     // WORKFLOW: Run main workflow
     //
-    SANGERTOL_FASTK_GENOME_STATISTICS (
+    SANGERTOL_GENOMEPROFILING (
         PIPELINE_INITIALISATION.out.samplesheet
     )
     //
